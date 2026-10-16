@@ -99,6 +99,19 @@ curl https://api.github.com/users/torvalds
 POST — "возьми мои данные и сделай что-то". Используется, когда ты хочешь отправить данные на сервер. Например, создать нового пользователя, отправить форму, загрузить файл.
 curl -X POST https://httpbin.org/post -d "name=Alice&age=30"  
 
+**Пример запроса**  
+if [ -n "$HH_TOKEN" ]; then  
+    SEARCH_TERM=$(echo "$1" | sed 's/ /%20/g')  
+    URL="https://api.hh.ru/vacancies?text=${SEARCH_TERM}&per_page=20"  
+
+    curl -s \  
+        -H "Authorization: Bearer $HH_TOKEN" \  
+        "$URL" \  
+        | jq '.' > hh.json  
+else  
+    cp ../../materials/hh.json ./hh.json  
+fi  
+
 **CSV (Comma-Separated Values)** - это текстовый формат для хранения табличных данных. Его обожают в Data Science, потому что его понимают абсолютно все: Excel, Python (pandas), базы данных (PostgreSQL) и даже простые текстовые редакторы.  
 1. Заголовки: Первая строка всегда содержит названия столбцов.  
 2. Разделитель: По умолчанию это запятая , (иногда точка с запятой ; в русском Excel, но в UNIX-мире и Data Science стандартом является именно запятая).  
