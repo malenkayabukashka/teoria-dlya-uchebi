@@ -877,12 +877,13 @@ print(f"Текст после замены: {new_text}")
 Текст после замены: Python это прекрасный язык программирования
 
 # Метод replace() может принимать необязательный третий аргумент <count>, который определяет количество замен.
+``python
 s = 'foo bar foo baz foo qux'
 print(s.replace('foo', 'grault', 2))
 # grault bar grault baz foo qux
 ```
 **Метод count()** `count(<sub>, <start>, <end>)` считает количество *непересекающихся* вхождений подстроки `<sub>` в исходную строку `s`.
-``python
+```python
 s = 'foo goo moo'
 print(s.count('oo'))
 print(s.count('oo', 0, 8))  # подсчет с 0 по 7 символ
