@@ -3138,12 +3138,24 @@ digits = {int(c) for c in input()}
 
 ### Неизменяемые множества (frozenset)
 
-Если нужен неизменяемый вариант множества, используйте frozenset:
+Замороженное множество (frozenset) также является встроенной коллекцией в Python. Обладая характеристиками обычного множества, замороженное множество не может быть изменено после создания.
+
+Кортеж (тип `tuple`) – неизменяемая версия списка (тип `list`), а замороженное множество (тип `frozenset`) – неизменяемая версия обычного множества (тип set).
+
+Для создания замороженного множества используется встроенная функция `frozenset()`, которая принимает в качестве аргумента другую коллекцию.
 ```python
-# Создание frozenset
-immutable_set = frozenset([1, 2, 3, 4])
-print(immutable_set)
-frozenset({1, 2, 3, 4})
+myset1 = frozenset({1, 2, 3})                         # на основе множества
+myset2 = frozenset([1, 1, 2, 3, 4, 4, 4, 5, 6, 6])    # на основе списка
+myset3 = frozenset('aabcccddee')                      # на основе строки
+
+print(myset1)
+print(myset2)
+print(myset3)
+# frozenset({1, 2, 3})
+# frozenset({1, 2, 3, 4, 5, 6})
+# frozenset({'e', 'd', 'c', 'b', 'a'})
+```
+```python
 # Попытка изменить frozenset вызывает ошибку
 try:
     immutable_set.add(5)
@@ -3154,6 +3166,68 @@ except AttributeError as e:
 normal_set = {frozenset([1, 2]), frozenset([3, 4])}
 print(len(normal_set))  # два frozenset'а поместились внутрь
 2
+```
+**Операции над замороженными множествами**
+
+Над замороженными множествами можно производить все операции, которые можно производить над обычными множествами:
+
+* объединение множеств: метод union() или оператор |;
+* пересечение множеств: метод intersection() или оператор &;
+* разность множеств: метод difference() или оператор -;
+* симметрическая разность множеств: метод symmetric_difference() или оператор ^.
+
+```python
+myset1 = frozenset('hello')
+myset2 = frozenset('world')
+
+print(myset1 | myset2)
+print(myset1 & myset2)
+print(myset1 ^ myset2)
+# frozenset({'l', 'w', 'e', 'h', 'r', 'd', 'o'})
+# frozenset({'l', 'o'})
+# frozenset({'d', 'h', 'w', 'e', 'r'})
+```
+Результатом операций над замороженными множествами будут тоже замороженные множества.
+
+**Примечание 1.** Будучи изменяемыми, обычные множества не могут быть элементами других множеств. Замороженные множества являются неизменяемыми, а значит могут быть элементами других множеств.
+```python
+sentence = 'The cat in the hat had two sidekicks, thing one and thing two.'
+
+words = sentence.lower().replace('.', '').replace(',', '').split()
+
+vowels = ['a', 'e', 'i', 'o', 'u']
+
+consonants = {frozenset({letter for letter in word if letter not in vowels}) for word in words}
+
+print(*consonants, sep='\n')
+# frozenset({'d', 'h'})
+# frozenset({'h', 't'})
+# frozenset({'n', 'h', 'g', 't'})
+# frozenset({'n'})
+# frozenset({'c', 't'})
+# frozenset({'n', 'd'})
+# frozenset({'w', 't'})
+# frozenset({'s', 'c', 'k', 'd'})
+```
+**Примечание 2.** Методы, изменяющие множество, отсутствуют у замороженных множеств:
+
+* add()
+* remove()
+* discard()
+* pop()
+* clear()
+* update()
+* intersection_update()
+* difference_update()
+* symmetric_difference_update()
+
+**Примечание 3.** Мы можем сравнивать простые (тип set) и замороженные множества (тип frozenset).
+```python
+myset1 = set('qwerty')
+myset2 = frozenset('qwerty')
+
+print(myset1 == myset2)
+# True
 ```
 
 ### Практические примеры использования множеств
