@@ -2431,21 +2431,21 @@ for i in range(10):
 print(numbers)
 # {1, 2, 65, 5, 37, 10, 17, 50, 82, 26}
 ```
-**Метод discard()**
+**Метод remove()**
 
-Метод `discard()` удаляет элемент из множества без генерации исключения (ошибки), если элемент отсутствует.
+Метод `remove()` удаляет элемент из множества с генерацией исключения (ошибки) в случае, если такого элемента нет.
 ```python
 numbers = {1, 2, 3, 4, 5}
 
-numbers.discard(3)
+numbers.remove(3)
 print(numbers)
 # {1, 2, 4, 5}
 
 numbers = {1, 2, 3, 4, 5}
 
-numbers.discard(10)
+numbers.remove(10)
 print(numbers)
-# {1, 2, 3, 4, 5}
+# KeyError
 ```
 
 **Метод discard()**
