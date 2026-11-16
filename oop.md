@@ -392,6 +392,73 @@ __name__ == 'имя_файла'  # → False (например, 'config')
 
 В модулях, которые предназначены для импорта (как `config.py` и `analytics.py`), этот блок не нужен.
 
+## Логирование в Python
+
+это запись событий программы в файл для отладки и мониторинга. В продакшене (на реальном сервере) ты не можешь запускать программу с `print()` — нужно записывать всё в файл.
+
+**🔹 Модуль `logging`**
+```python
+import logging
+
+# Настройка логирования (один раз в начале программы)
+logging.basicConfig(
+    filename='analytics.log',      # имя файла
+    level=logging.INFO,            # уровень логирования
+    format='%(asctime)s %(message)s'  # формат: дата + сообщение
+)
+
+# Запись в лог
+logging.info("Это информационное сообщение")
+logging.error("Это сообщение об ошибке")
+```
+**🔹 Формат %(asctime)s**
+
+Это специальный плейсхолдер, который автоматически подставляет дату и время в формате:
+`2020-05-01 22:16:16,877`
+
+**🔹 Куда вставлять `logging.info()`?**
+
+В каждый метод каждого класса:
+```python
+class Research:
+    def file_reader(self, has_header=True):
+        logging.info("Reading file...")
+        # ... код ...
+        logging.info("File read successfully")
+        return result
+    
+    class Calculations:
+        def counts(self):
+            logging.info("Calculating the counts of heads and tails")
+            # ... код ...
+            return [orel, reshka]
+```
+## Telegram вебхуки
+
+Вебхук — это HTTP-запрос (обычно POST), который отправляется на определённый URL. Telegram Bot API предоставляет вебхуки для отправки сообщений.
+
+**🔹 Как это работает?**
+
+* Ты создаёшь бота в Telegram (через @BotFather)
+* Получаешь токен бота (например, 123456:ABC-DEF...)
+* Получаешь chat_id (ID канала/чата)
+* Отправляешь POST-запрос на URL:
+`https://api.telegram.org/bot<token>/sendMessage`
+* В теле запроса передаёшь chat_id и text
+
+```python
+import requests
+
+def send_telegram_message(token, chat_id, text):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": text
+    }
+    response = requests.post(url, data=data)
+    return response.json()
+```
+
 ## Шаблоны для переиспользования
 ```python
 class MyClass:
