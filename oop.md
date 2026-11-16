@@ -65,7 +65,47 @@ class Counter:
 class Person:
     def __init__(self, name):
         self.name = name  # атрибут экземпляра
+
+class Person:
+    def __init__(self, name, age):
+        self.name = name    # ← атрибут ЭКЗЕМПЛЯРА, свой у каждого
+        self.age = age
+
+p1 = Person("Alice", 30)
+p2 = Person("Bob", 25)
+
+print(p1.name)    # ← "Alice"
+print(p2.name)    # ← "Bob"
 ```
+| Характеристика | Атрибут класса | Атрибут экземпляра | 
+|--|--|--|
+| Где объявляется| В теле класса, вне методов | Внутри __init__ (или других методов) 
+| Cинтаксис | attr = value | self.attr = value
+| Кому принадлежит | Классу (один на всех) | Конкретному объекту |
+| Доступ | ClassName.attr или obj.attr | Только obj.attr
+| Изменение | Меняется у всех объектов сразу| Меняется только у одного объекта |
+
+**🔗 Как методы используют атрибуты экземпляра**
+
+После того как мы сохранили данные в self.attr, любой метод класса может их использовать:
+```python
+class FileProcessor:
+    def __init__(self, filename):
+        self.filename = filename      # ← сохраняем имя файла
+    
+    def read(self):
+        with open(self.filename, 'r') as f:    # ← используем атрибут
+            return f.read()
+    
+    def get_name(self):
+        return self.filename          # ← используем атрибут
+
+obj = FileProcessor("data.csv")
+print(obj.read())         # ← прочитает data.csv
+print(obj.get_name())     # ← выведет "data.csv"
+```
+`self` — это "мост" между методами одного объекта. Благодаря `self` метод `read()` "знает", с каким файлом работать, хотя этот файл был указан при создании объекта.
+
 **🛠️ Методы класса**
 
 Метод — это функция, определённая внутри класса. Главная особенность — первый параметр всегда `self`.
@@ -110,6 +150,156 @@ processor.read_content()
 2. Внутри — атрибут `file_name` и метод `read_content`
 3. Создали экземпляр `processor`
 4. Вызвали метод `read_content()` — он прочитал файл и вывел содержимое
+
+## Конструктор
+
+это специальный метод, который автоматически вызывается при создании объекта. Его задача — инициализировать состояние объекта (то есть задать его атрибуты).
+
+**🔑 Ключевые особенности __init__()**
+
+* Имя всегда `__init__` (два подчёркивания с каждой стороны — "dunder method")
+* Первый параметр — `self` (как у любого метода)
+* Вызывается автоматически при `obj = ClassName(...)`
+* Ничего не возвращает (даже `return None` писать не нужно)
+* Принимает любые параметры — именно через них мы настраиваем объект
+
+**🧩 Синтаксис конструктора**
+```python
+class MyClass:
+    def __init__(self, param1, param2):
+        self.attr1 = param1      # ← сохраняем в атрибут экземпляра
+        self.attr2 = param2      # ← сохраняем в атрибут экземпляра
+
+# Создание объекта с параметрами:
+obj = MyClass("value1", "value2")
+```
+**🎬 Что происходит при obj = MyClass("value1", "value2")?**
+```python
+# 1. Создаёт пустой объект
+# 2. Вызывает __init__(obj, "value1", "value2")
+#    - self.attr1 = "value1"
+#    - self.attr2 = "value2"
+# 3. Возвращает готовый объект
+```
+Конструктор — идеальное место для проверки входных данных. Если данные некорректны, нужно сразу выбросить исключение.
+```python
+def __init__(self, value):
+    if value < 0:
+        raise ValueError("Value must be non-negative")
+    self.value = value
+```
+raise — это команда, которая принудительно выбрасывает исключение. Когда исключение выброшено:
+* Выполнение метода немедленно прерывается
+* Python ищет ближайший `try/except` выше по стеку
+* Если `try/except` нет — программа падает с ошибкой
+
+## Шаблоны для переиспользования
+```python
+class MyClass:
+    def method_name(self):      # ← двоеточие обязательно!
+        # тело метода
+        pass
+```
+**Шаблон 2: Правильный синтаксис with**
+```python
+with open('file.txt', 'r', encoding='utf-8') as f:   # ← двоеточие обязательно!
+    for line in f:
+        print(line, end='')
+```
+**Шаблон 3: Вызов метода экземпляра**
+```python
+if __name__ == '__main__':
+    obj = MyClass()
+    obj.method_name()   # ← скобки обязательны для вызова!
+```
+**Шаблон 4: Чтение файла целиком через .read()**
+```python
+def file_reader(self):
+    with open('data.csv', 'r', encoding='utf-8') as file:
+        content = file.read()   # ← читает ВСЁ сразу в одну строку
+    return content
+```
+**Шаблон 5: Правильная структура класса с методом**
+```python
+class ClassName:
+    def method_name(self):
+        with open('file.txt', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content              # ← return ПОСЛЕ with
+
+if __name__ == '__main__':
+    obj = ClassName()
+    result = obj.method_name()
+    print(result, end='')           # ← печать в основной программе
+```
+**Шаблон 6: Разделение ответственности**
+```python
+# ❌ ПЛОХО: метод сам читает И сам печатает
+def bad_method(self):
+    with open('file.txt') as f:
+        content = f.read()
+    print(content)          # ← печать внутри метода
+
+# ✅ ХОРОШО: метод читает, вызывающий код печатает
+def good_method(self):
+    with open('file.txt') as f:
+        content = f.read()
+    return content          # ← только возврат данных
+
+# В основной программе:
+result = obj.good_method()
+print(result)               # ← печать здесь
+```
+**Шаблон 7: Класс с конструктором и методом**
+```python
+class ClassName:
+    def __init__(self, param):
+        self.param = param
+    
+    def method(self):
+        # используем self.param
+        result = process(self.param)
+        return result
+```
+**Шаблон 8: Валидация с raise**
+```python
+def validate_data(data):
+    if not is_valid(data):
+        raise ValueError("Некорректные данные")
+    return data
+```
+**Шаблон 9: Получение аргументов командной строки**
+```python
+import sys
+
+if __name__ == '__main__':
+    if len(sys.argv) != EXPECTED_COUNT:
+        raise ValueError("Usage: script.py <arg1> <arg2>")
+    
+    arg1 = sys.argv[1]
+    arg2 = sys.argv[2]
+    # основная логика
+```
+**Шаблон 4: Чтение файла с валидацией**
+```python
+def read_and_validate(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    # Валидация заголовка
+    header = lines[0]
+    if not is_valid_header(header):
+        raise ValueError("Invalid header")
+    
+    # Валидация данных
+    for line in lines[1:]:
+        clean_line = line.strip()
+        if not is_valid_data(clean_line):
+            raise ValueError("Invalid data")
+    
+    return lines
+```
+
 
 
 
