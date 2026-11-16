@@ -431,7 +431,7 @@ if __name__ == '__main__':
     arg2 = sys.argv[2]
     # основная логика
 ```
-**Шаблон 4: Чтение файла с валидацией**
+**Шаблон 10: Чтение файла с валидацией**
 ```python
 def read_and_validate(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -449,6 +449,17 @@ def read_and_validate(file_path):
             raise ValueError("Invalid data")
     
     return lines
+```
+**Шаблон 11: Генерация случайных бинарных данных**
+```python
+from random import randint
+
+def generate_random(num_steps):
+    result = []
+    for _ in range(num_steps):
+        coin = randint(0, 1)
+        result.append([coin, 1 - coin])
+    return result
 ```
 
 
