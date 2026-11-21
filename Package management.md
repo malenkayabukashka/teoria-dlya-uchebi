@@ -219,6 +219,8 @@ cProfile.run('my_function()')
 # Способ 2: из терминала
 # python -m cProfile -o output.prof my_script.py
 
+python -m cProfile financial.py MSFT "Total Revenue" > profiling-sleep.txt
+
 import cProfile
 
 def медленная_функция():
